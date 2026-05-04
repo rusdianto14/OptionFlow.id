@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: optionflow_postgres
+    environment:
+      POSTGRES_USER: optionflow
+      POSTGRES_PASSWORD: optionflow
+      POSTGRES_DB: optionflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - optionflow_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U optionflow -d optionflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  optionflow_pgdata:
