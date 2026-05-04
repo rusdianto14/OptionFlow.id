@@ -23,6 +23,7 @@ from collections.abc import Sequence
 from dataclasses import asdict
 from datetime import UTC, datetime
 
+from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from . import pipeline
@@ -67,11 +68,16 @@ def _levels_snapshot_to_db_row(
 
 
 def upsert_snapshot(snap: LevelsSnapshot, computed_at: datetime, n_major: int) -> None:
-    """UPSERT a snapshot row into `levels_latest` keyed by `underlying`."""
+    """UPSERT a snapshot row into `levels_latest` keyed by `underlying`.
+
+    Note: `updated_at` is set explicitly to `func.now()` here because Core
+    `pg_insert` bypasses the ORM-level `onupdate` hook on the model.
+    """
     row = _levels_snapshot_to_db_row(snap, computed_at, n_major)
     with session_scope() as session:
         stmt = pg_insert(LevelsLatest).values(**row)
-        update_cols = {c: stmt.excluded[c] for c in row if c != "underlying"}
+        update_cols: dict = {c: stmt.excluded[c] for c in row if c != "underlying"}
+        update_cols["updated_at"] = func.now()
         stmt = stmt.on_conflict_do_update(
             index_elements=[LevelsLatest.underlying],
             set_=update_cols,

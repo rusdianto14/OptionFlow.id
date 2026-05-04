@@ -62,7 +62,13 @@ def test_upsert_inserts_then_updates(db_session):
     assert isinstance(row.major_short_gex, list)
     assert all("strike" in g and "gex" in g and "by" in g for g in row.major_long_gex)
 
+    first_updated_at = row.updated_at
+    assert first_updated_at is not None
+
     # second UPSERT same underlying -> still only one row, with refreshed values
+    import time as _time
+
+    _time.sleep(0.05)  # ensure func.now() advances measurably between UPSERTs
     snap2 = compute.compute_levels(_fake_chain(), n_major=3)
     ts2 = datetime(2026, 5, 1, 18, 1, tzinfo=UTC)
     snapshot_writer.upsert_snapshot(snap2, computed_at=ts2, n_major=3)
@@ -71,6 +77,8 @@ def test_upsert_inserts_then_updates(db_session):
     rows = db_session.execute(select(db.LevelsLatest)).scalars().all()
     assert len(rows) == 1
     assert rows[0].computed_at == ts2
+    # updated_at must advance on UPSERT (Devin Review BUG_..._0001 regression)
+    assert rows[0].updated_at > first_updated_at
 
 
 def test_upsert_two_underlyings_yields_two_rows(db_session):

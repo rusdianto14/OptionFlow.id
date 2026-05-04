@@ -57,9 +57,10 @@ def main() -> int:
     if args.cmd == "once":
         trade_date = dt.date.fromisoformat(args.date)
         hh, mm = (int(x) for x in args.time.split(":"))
+        # ET (DST) -> UTC. Use timedelta to handle hours >= 20 without overflow.
         snapshot_ts = dt.datetime.combine(
-            trade_date, dt.time(hh + 4, mm), tzinfo=dt.UTC
-        )  # ET (DST) -> UTC
+            trade_date, dt.time(hh, mm), tzinfo=dt.UTC
+        ) + dt.timedelta(hours=4)
         results = snapshot_writer.run_once(args.underlying, snapshot_ts, settings=settings)
         for u, snap in results.items():
             print(f"{u}: F={snap.forward:.2f} ZG={snap.zero_gamma.zero_gamma:.2f}")
