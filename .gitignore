@@ -1,3 +1,9 @@
+# Local-only SDK extraction directory used while developing the indicators.
+motivewave-sdk/
+
+# Maven build output
+indicators/motivewave/target/
+
 # Python
 __pycache__/
 *.py[cod]
