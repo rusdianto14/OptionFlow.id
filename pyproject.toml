@@ -1,0 +1,50 @@
+[project]
+name = "optionflow"
+version = "0.1.0"
+description = "0DTE GEX / Zero Gamma / Put-Call Wall engine for SPXW & NDXP, fed by Databento OPRA, served to MotiveWave & ATAS indicators."
+requires-python = ">=3.12"
+dependencies = [
+    "databento>=0.77.0",
+    "numpy>=2.0",
+    "scipy>=1.14",
+    "pydantic>=2.13",
+    "pandas>=2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=5.0",
+    "ruff>=0.7",
+    "mypy>=1.13",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/optionflow"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = [
+    "E501",  # line length handled by formatter
+]
+# Note: N (PEP8 naming) is intentionally NOT enabled because BSM math code
+# uses uppercase single-letter variables (S, K, T, F, C, P) that match
+# the standard finance notation. Renaming these would hurt readability.
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
