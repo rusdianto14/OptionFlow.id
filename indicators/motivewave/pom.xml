@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>id.optionflow</groupId>
+  <artifactId>optionflow-mw</artifactId>
+  <version>0.1.0</version>
+  <packaging>jar</packaging>
+
+  <name>OptionFlow MotiveWave Study</name>
+  <description>0DTE GEX / Zero Gamma / Walls overlay study for MotiveWave</description>
+
+  <properties>
+    <!--
+      The MotiveWave SDK ships as Java 26 bytecode (class file version 70).
+      You need a JDK 26+ to compile against it. The deployed jar then runs
+      inside MotiveWave's bundled JRE (also 26+).
+    -->
+    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.motivewave</groupId>
+      <artifactId>mwave-sdk</artifactId>
+      <version>local</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/mwave_sdk.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>optionflow-mw</finalName>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
