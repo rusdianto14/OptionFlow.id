@@ -1,0 +1,9 @@
+target/
+*.iml
+.idea/
+.vscode/
+*.class
+
+# MotiveWave SDK is proprietary — do not commit. Users must drop their own
+# copy of mwave_sdk.jar into lib/ before building.
+lib/*.jar
